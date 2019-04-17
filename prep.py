@@ -263,14 +263,3 @@ def norhprep(norhmap, imgsize=512, ratio=1.2):
 
 
 
-
-
-
-"""
-
-**** sunpy.map.Mapは、まだまだ発展途上！えらくつかいづらいので注意！ ****
-
-cdelt1,2 --> x-y軸のarcsec表示に寄与。pixelに対し、何arcsecか。太陽部分の画像は変わらない。
-太陽部分の画像を変えたければ、rotateでscaleを変えるしかない。
-
-"""
