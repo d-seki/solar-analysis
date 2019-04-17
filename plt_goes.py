@@ -1,3 +1,6 @@
+# plot GOES soft X-ray flux
+# >python plt_goes.py 2016-11-03T00:00 2016-11-06T12:00
+
 import datetime, sys
 from sunpy.time import TimeRange
 from sunpy.net import  Fido, attrs
