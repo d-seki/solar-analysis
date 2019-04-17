@@ -1,5 +1,5 @@
 # plot electron or proton integrated fluxes.
-# >python plt_elpr.py 2016-11-03T00:00 2016-11-06T12:00
+# >python plt_elpr.py 2016-11-03T00:00 2016-11-06T12:00 e2
 
 import datetime, sys, calendar, requests, io
 import pandas as pd
