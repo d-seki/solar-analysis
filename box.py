@@ -1,3 +1,5 @@
+# to draw a box on the solar image
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sunpy.coordinates.utils import GreatArc
