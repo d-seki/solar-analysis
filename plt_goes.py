@@ -1,6 +1,3 @@
-# plot GOES soft X-ray flux
-# >python plt_goes.py 2016-11-03T00:00 2016-11-06T12:00
-
 import datetime, sys
 from sunpy.time import TimeRange
 from sunpy.net import  Fido, attrs
@@ -39,6 +36,6 @@ plt.gca().xaxis.set_major_formatter(myFmt)
 plt.title('GOES Xray Flux', size=20)
 plt.xlabel('Time (Starting at '+\
         start_time.strftime('%Y-%m-%d %H:%M')+' UT)', size=15)
-plt.ylabel('Watts $m^{-2}$', size=15)
+plt.ylabel('W m$^{-2}$', size=15)
 plt.grid()
 plt.subplots_adjust(left=0.12, right=0.98,bottom=0.22)

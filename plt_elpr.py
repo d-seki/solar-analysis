@@ -1,6 +1,3 @@
-# plot electron or proton integrated fluxes.
-# >python plt_elpr.py 2016-11-03T00:00 2016-11-06T12:00 e2
-
 import datetime, sys, calendar, requests, io
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,26 +25,23 @@ p7: proton > 100 MeV\n\
 
 flux += '_flux_ic'
 base_url    = 'https://satdat.ngdc.noaa.gov/sem/goes/data/avg/'
-omni_url    = 'https://cdaweb.sci.gsfc.nasa.gov/pub/data/omni/low_res_omni/'
 year        = start_time.year
 month       = start_time.month
 while True:
     print(year,month)
     lastday = calendar.monthrange(year,month)[1]
-    filename6 = base_url+\
-        '{:04}/{:02}/goes06/csv/g06_eps_5m_{:04}{:02}01_{:04}{:02}{:02}.csv'.format(
-        year,month,year,month,year,month,lastday)
-    filename7 = base_url+\
-        '{:04}/{:02}/goes07/csv/g07_eps_5m_{:04}{:02}01_{:04}{:02}{:02}.csv'.format(
-        year,month,year,month,year,month,lastday)
-    try:
-        r = requests.get(filename7)
-        file7 = io.StringIO(r.text.split('data:')[1])
-        tmpelpr_df = pd.read_csv(file7, index_col=0, na_values=-99999)
-    except:
-        r = requests.get(filename6)
-        file6 = io.StringIO(r.text.split('data:')[1])
-        tmpelpr_df = pd.read_csv(file6, index_col=0, na_values=-99999)
+    dirname = base_url+\
+        '{:04}/{:02}/'.format(year,month)
+    rdir = requests.get(dirname)
+    goes_id = rdir.text.split('href')[9][6:8]
+    filename = base_url+\
+        '{:04}/{:02}/goes'.format(year, month)+goes_id+\
+        '/csv/g'+goes_id+\
+        '_eps_5m_{:04}{:02}01_{:04}{:02}{:02}.csv'.format(
+        year,month,year,month,lastday)
+    rfile = requests.get(filename)
+    filedat = io.StringIO(rfile.text.split('data:')[1])
+    tmpelpr_df = pd.read_csv(filedat, index_col=0, na_values=-99999)
 
     if (year == start_time.year) & (month == start_time.month):
         elpr_df = tmpelpr_df
@@ -55,11 +49,11 @@ while True:
         elpr_df = pd.concat([elpr_df, tmpelpr_df])
 
     month += 1
+    if (year == end_time.year) & (month == end_time.month+1):
+        break
     if month > 12:
         month = 1
         year += 1
-    if (year == end_time.year) & (month == end_time.month+1):
-        break
 
 fig = plt.figure(figsize=(8,8))
 ax = fig.add_subplot(111)

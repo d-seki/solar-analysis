@@ -1,5 +1,3 @@
-# to draw a box on the solar image
-
 import matplotlib.pyplot as plt
 import numpy as np
 from sunpy.coordinates.utils import GreatArc
@@ -7,41 +5,42 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 
 
-def map_box(amap,bl_arcsec, tr_arcsec, ax=None, color='c'):
-    bl_arcsec = SkyCoord(
-        bl_arcsec[0]*u.arcsec, bl_arcsec[1]*u.arcsec,
+def map_box(amap, bl_arc, tr_arc, img=None, c='c'):
+    color = c
+    if type(bl_arc) != SkyCoord:
+        bl_arc = SkyCoord(
+            bl_arc[0]*u.arc, bl_arc[1]*u.arc,
+            frame=amap.coordinate_frame)
+        tr_arc = SkyCoord(
+            tr_arc[0]*u.arc, tr_arc[1]*u.arc,
+            frame=amap.coordinate_frame)
+    br_arc = SkyCoord(
+	tr_arc.Tx, bl_arc.Ty,
 	frame=amap.coordinate_frame)
-    tr_arcsec = SkyCoord(
-	tr_arcsec[0]*u.arcsec, tr_arcsec[1]*u.arcsec,
+    tl_arc = SkyCoord(
+	bl_arc.Tx, tr_arc.Ty,
 	frame=amap.coordinate_frame)
-    br_arcsec = SkyCoord(
-	tr_arcsec.Tx, bl_arcsec.Ty,
-	frame=amap.coordinate_frame)
-    tl_arcsec = SkyCoord(
-	bl_arcsec.Tx, tr_arcsec.Ty,
-	frame=amap.coordinate_frame)
-    blbr =  GreatArc(bl_arcsec, br_arcsec)
-    brtr =  GreatArc(br_arcsec, tr_arcsec)
-    tltr =  GreatArc(tl_arcsec, tr_arcsec)
-    bltl =  GreatArc(bl_arcsec, tl_arcsec)
-    if not ax:
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+    blbr =  GreatArc(bl_arc, br_arc)
+    brtr =  GreatArc(br_arc, tr_arc)
+    tltr =  GreatArc(tl_arc, tr_arc)
+    bltl =  GreatArc(bl_arc, tl_arc)
+    if not img:
+        img = amap.plot()
 
-    amap.plot()
-    ax.plot_coord(blbr.coordinates(), color=color)
-    ax.plot_coord(brtr.coordinates(), color=color)
-    ax.plot_coord(tltr.coordinates(), color=color)
-    ax.plot_coord(bltl.coordinates(), color=color)
+    img.axes.plot_coord(blbr.coordinates(), color=color)
+    img.axes.plot_coord(brtr.coordinates(), color=color)
+    img.axes.plot_coord(tltr.coordinates(), color=color)
+    img.axes.plot_coord(bltl.coordinates(), color=color)
+
+    return img
 
 
-def plot_box(img, bl, tr, clr='black'):
-    bl = bl[::-1]
-    tr = tr[::-1]
-    plt.hlines(bl[0], bl[1],tr[1], color=clr)
-    plt.hlines(tr[0], bl[1],tr[1], color=clr)
-    plt.vlines(bl[1], bl[0],tr[0], color=clr)
-    plt.vlines(tr[1], bl[0],tr[0], color=clr)
+def plot_box(img, bl, tr, c='black'):
+    # bl[x,y], tr[x,y]
+    img.axes.hlines(bl[1], bl[0],tr[0], color=c)
+    img.axes.hlines(tr[1], bl[0],tr[0], color=c)
+    img.axes.vlines(bl[0], bl[1],tr[1], color=c)
+    img.axes.vlines(tr[0], bl[1],tr[1], color=c)
 
 def draw_box(img, bl, tr, clr='white', num=10):
     width = int(img.shape[0]/200)
